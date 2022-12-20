@@ -24,7 +24,7 @@ interface Point {
 }
 
 if ("serviceWorker" in navigator) {
-  await navigator.serviceWorker.register("./serviceWorker.mjs");
+  await navigator.serviceWorker.register("/serviceWorker.mjs");
 }
 
 const App: FunctionComponent = () => {

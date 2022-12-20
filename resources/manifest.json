@@ -1,8 +1,6 @@
 {
   "lang": "en-US",
   "name": "fing",
-  "short_name": "fing",
-  "description": "",
   "start_url": ".",
   "display": "fullscreen",
   "background_color": "#ffffff",
