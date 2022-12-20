@@ -23,6 +23,10 @@ interface Point {
   p: number;
 }
 
+if ("serviceWorker" in navigator) {
+  await navigator.serviceWorker.register("./serviceWorker.mjs");
+}
+
 const App: FunctionComponent = () => {
   const [canvasWidth, setCanvasWidth] = useState(() => {
     const savedCanvasWidthString = localStorage.getItem("canvasWidth");
