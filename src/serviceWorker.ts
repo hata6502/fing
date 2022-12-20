@@ -1,4 +1,4 @@
-const requests = ["/", "/dist/index.js", "/favicon.png", "/manifest.json"];
+const requests = ["/", "/favicon.png", "/index.mjs", "/manifest.json"];
 
 // @ts-expect-error
 const cacheName = String(TIMESTAMP);
