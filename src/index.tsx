@@ -28,6 +28,13 @@ if ("serviceWorker" in navigator) {
 }
 
 const App: FunctionComponent = () => {
+  const [pageKey, dispatchPageKey] = useState("");
+  return <Page key={pageKey} dispatchPageKey={dispatchPageKey} />;
+};
+
+const Page: FunctionComponent<{
+  dispatchPageKey: Dispatch<SetStateAction<string>>;
+}> = ({ dispatchPageKey }) => {
   const [canvasWidth, setCanvasWidth] = useState(() => {
     const savedCanvasWidthString = localStorage.getItem("canvasWidth");
     return savedCanvasWidthString
@@ -347,8 +354,11 @@ const App: FunctionComponent = () => {
   };
 
   const handleClearButtonClick = () => {
-    localStorage.clear();
-    location.reload();
+    for (const key of ["canvasWidth", "canvasHeight", "mountedTime", "paths"]) {
+      localStorage.removeItem(key);
+    }
+
+    dispatchPageKey(String(Math.random()));
   };
 
   return (
