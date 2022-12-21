@@ -295,16 +295,23 @@ const Page: FunctionComponent<{
     const minY = points.reduce((a, b) => Math.min(a, b.y), Infinity) - padding;
 
     const canvasElement = document.createElement("canvas");
-    canvasElement.width = (maxX - minX) * zoom;
-    canvasElement.height = (maxY - minY) * zoom;
+    const width = (maxX - minX) * zoom;
+    const height = (maxY - minY) * zoom;
+    canvasElement.width = width;
+    canvasElement.height = height;
 
     const canvasContext = canvasElement.getContext("2d");
     if (!canvasContext) {
       throw new Error("Couldn't get canvasContext. ");
     }
 
+    canvasContext.fillStyle = "#ffffff";
+    canvasContext.rect(0, 0, width, height);
+    canvasContext.fill();
+
     canvasContext.lineCap = "round";
     canvasContext.lineWidth = zoom;
+    canvasContext.strokeStyle = "#000000";
     for (const path of paths) {
       canvasContext.beginPath();
 
