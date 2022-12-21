@@ -39,14 +39,14 @@ const Page: FunctionComponent<{
     const savedCanvasWidthString = localStorage.getItem("canvasWidth");
     return savedCanvasWidthString
       ? Number(savedCanvasWidthString)
-      : tileSize * (Math.ceil(innerWidth / tileSize) + 2);
+      : tileSize * (Math.ceil(innerWidth / tileSize) + 4);
   });
 
   const [canvasHeight, setCanvasHeight] = useState(() => {
     const savedCanvasHeightString = localStorage.getItem("canvasHeight");
     return savedCanvasHeightString
       ? Number(savedCanvasHeightString)
-      : tileSize * (Math.ceil(innerHeight / tileSize) + 2);
+      : tileSize * (Math.ceil(innerHeight / tileSize) + 4);
   });
 
   const [mountedTime] = useState(() => {
