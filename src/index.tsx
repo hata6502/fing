@@ -244,8 +244,8 @@ const Page: FunctionComponent<{
 
       if (feedback >= 0.5) {
         const delta =
-          (((currentPoint.x - prevPoint.x) / visualViewport.width) ** 2 +
-            ((currentPoint.y - prevPoint.y) / visualViewport.height) ** 2) **
+          /*((currentPoint.x - prevPoint.x) / visualViewport.width) ** 2 +*/
+          (((currentPoint.y - prevPoint.y) / visualViewport.height) ** 2) **
           0.5;
 
         velocityXRef.current +=
