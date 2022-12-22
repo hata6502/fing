@@ -249,7 +249,7 @@ const Page: FunctionComponent<{
 
         velocityXRef.current +=
           (feedback - 0.5) * delta * sensitivityRef.current;
-        sensitivityRef.current += ((feedback - 0.75) * delta) / 65536;
+        sensitivityRef.current += ((feedback - 0.75) * delta) / 16384;
       }
     }
   };
