@@ -151,7 +151,7 @@ const Page: FunctionComponent<{
     };
   }, []);
 
-  const sensitivityRef = useRef(1 / 64);
+  const sensitivityRef = useRef(1 / 16);
   const velocityXRef = useRef(0);
   const velocityDecimalXRef = useRef(0);
 
