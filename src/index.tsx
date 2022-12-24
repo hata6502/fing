@@ -252,7 +252,10 @@ const Page: FunctionComponent<{
 
         velocityXRef.current +=
           (feedback - 0.5) * delta * sensitivityRef.current;
-        sensitivityRef.current = Math.max(sensitivityRef.current + ((feedback - 0.75) * delta) / 16384, 0);
+        sensitivityRef.current = Math.max(
+          sensitivityRef.current + ((feedback - 0.75) * delta) / 16384,
+          0
+        );
       }
     }
   };
@@ -305,7 +308,6 @@ const Page: FunctionComponent<{
 
       return length >= 8;
     });
-
     const points = noiseFilteredPaths.flat();
     const maxX = points.reduce((a, b) => Math.max(a, b.x), -Infinity) + padding;
     const minX = points.reduce((a, b) => Math.min(a, b.x), Infinity) - padding;
@@ -330,7 +332,7 @@ const Page: FunctionComponent<{
     canvasContext.lineCap = "round";
     canvasContext.lineWidth = zoom;
     canvasContext.strokeStyle = textColor;
-    for (const path of noiseFilteredPaths) {
+    for (const path of paths) {
       canvasContext.beginPath();
 
       for (const [pointIndex, point] of path.entries()) {
@@ -410,7 +412,12 @@ const Page: FunctionComponent<{
           <svg
             viewBox={viewBox}
             xmlns="http://www.w3.org/2000/svg"
-            style={{ position: "absolute", width: "100%", userSelect: "none" }}
+            style={{
+              position: "absolute",
+              width: "100%",
+              backgroundColor,
+              userSelect: "none",
+            }}
           >
             <Grids canvasWidth={canvasWidth} canvasHeight={canvasHeight} />
           </svg>
@@ -425,7 +432,6 @@ const Page: FunctionComponent<{
             style={{
               position: "relative",
               width: "100%",
-              backgroundColor,
               userSelect: "none",
             }}
             onContextMenu={handleSVGContextMenu}
