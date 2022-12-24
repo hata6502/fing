@@ -13,7 +13,7 @@ import {
 } from "react";
 import { createRoot } from "react-dom/client";
 
-const backgroundColor = "rgb(255, 252, 230)";
+const backgroundColor = "#f5f5dc";
 const textColor = "rgba(0, 0, 0, 0.87)";
 
 const gridSize = 32;
@@ -290,7 +290,7 @@ const Page: FunctionComponent<{
   };
 
   const handleShareButtonClick = async () => {
-    const padding = 4;
+    const padding = 8;
     const zoom = 4;
 
     const noiseFilteredPaths = paths.filter((path) => {
