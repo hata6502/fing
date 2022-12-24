@@ -154,7 +154,7 @@ const Page: FunctionComponent<{
     };
   }, []);
 
-  const sensitivityRef = useRef(1 / 64);
+  const sensitivityRef = useRef(1 / 16);
   const velocityXRef = useRef(0);
   const velocityDecimalXRef = useRef(0);
 
@@ -252,7 +252,7 @@ const Page: FunctionComponent<{
 
         velocityXRef.current +=
           (feedback - 0.5) * delta * sensitivityRef.current;
-        sensitivityRef.current += ((feedback - 0.75) * delta) / 65536;
+        sensitivityRef.current = Math.max(sensitivityRef.current + ((feedback - 0.75) * delta) / 16384, 0);
       }
     }
   };
