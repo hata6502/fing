@@ -13,6 +13,9 @@ import {
 } from "react";
 import { createRoot } from "react-dom/client";
 
+const backgroundColor = "rgb(255, 252, 230)";
+const textColor = "rgba(0, 0, 0, 0.87)";
+
 const gridSize = 32;
 const tileSize = 4 * gridSize;
 
@@ -287,7 +290,23 @@ const Page: FunctionComponent<{
     const padding = 4;
     const zoom = 4;
 
-    const points = paths.flat();
+    const noiseFilteredPaths = paths.filter((path) => {
+      let length = 0;
+      let prevPoint;
+      for (const point of path) {
+        if (prevPoint) {
+          length +=
+            ((point.x - prevPoint.x) ** 2 + (point.y - prevPoint.y) ** 2) **
+            (1 / 2);
+        }
+
+        prevPoint = point;
+      }
+
+      return length >= 8;
+    });
+
+    const points = noiseFilteredPaths.flat();
     const maxX = points.reduce((a, b) => Math.max(a, b.x), -Infinity) + padding;
     const minX = points.reduce((a, b) => Math.min(a, b.x), Infinity) - padding;
     const maxY = points.reduce((a, b) => Math.max(a, b.y), -Infinity) + padding;
@@ -304,14 +323,14 @@ const Page: FunctionComponent<{
       throw new Error("Couldn't get canvasContext. ");
     }
 
-    canvasContext.fillStyle = "#ffffff";
+    canvasContext.fillStyle = backgroundColor;
     canvasContext.rect(0, 0, width, height);
     canvasContext.fill();
 
     canvasContext.lineCap = "round";
     canvasContext.lineWidth = zoom;
-    canvasContext.strokeStyle = "#000000";
-    for (const path of paths) {
+    canvasContext.strokeStyle = textColor;
+    for (const path of noiseFilteredPaths) {
       canvasContext.beginPath();
 
       for (const [pointIndex, point] of path.entries()) {
@@ -374,15 +393,11 @@ const Page: FunctionComponent<{
         style={{
           width: canvasWidth + tileSize,
           height: tileSize / 2,
-          backgroundColor: "#eeeeee",
         }}
       />
 
       <div style={{ display: "flex", width: canvasWidth + tileSize }}>
-        <div
-          ref={canvasLeftElementRef}
-          style={{ width: tileSize / 2, backgroundColor: "#eeeeee" }}
-        />
+        <div ref={canvasLeftElementRef} style={{ width: tileSize / 2 }} />
 
         <div
           style={{
@@ -407,7 +422,12 @@ const Page: FunctionComponent<{
             dispatchPointerID={dispatchPointerID}
             viewBox={viewBox}
             xmlns="http://www.w3.org/2000/svg"
-            style={{ position: "relative", width: "100%", userSelect: "none" }}
+            style={{
+              position: "relative",
+              width: "100%",
+              backgroundColor,
+              userSelect: "none",
+            }}
             onContextMenu={handleSVGContextMenu}
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
@@ -416,10 +436,7 @@ const Page: FunctionComponent<{
           />
         </div>
 
-        <div
-          ref={canvasRightElementRef}
-          style={{ width: tileSize / 2, backgroundColor: "#eeeeee" }}
-        />
+        <div ref={canvasRightElementRef} style={{ width: tileSize / 2 }} />
       </div>
 
       <div
@@ -427,7 +444,6 @@ const Page: FunctionComponent<{
         style={{
           width: canvasWidth + tileSize,
           height: tileSize / 2,
-          backgroundColor: "#eeeeee",
         }}
       />
 
@@ -573,7 +589,7 @@ const Path: FunctionComponent<{
       <path
         d={d}
         fill="none"
-        stroke="#000000"
+        stroke={textColor}
         strokeLinecap="round"
         style={{ userSelect: "none" }}
       />
