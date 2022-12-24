@@ -13,7 +13,7 @@ import {
 } from "react";
 import { createRoot } from "react-dom/client";
 
-const backgroundColor = "#f5f5dc";
+const backgroundColor = "#fafaef";
 const textColor = "rgba(0, 0, 0, 0.87)";
 
 const gridSize = 32;
