@@ -509,7 +509,7 @@ const Grids: FunctionComponent<{ canvasWidth: number; canvasHeight: number }> =
               fill={
                 cx % tileSize === 0 && cy % tileSize === 0
                   ? "rgba(0, 0, 0, 0.2)"
-                  : "rgba(0, 0, 0, 0.1)"
+                  : "rgba(0, 0, 0, 0.05)"
               }
               style={{ userSelect: "none" }}
             />
