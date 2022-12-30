@@ -204,9 +204,6 @@ const Page: FunctionComponent<{
 
   const viewBox = `0 0 ${canvasWidth} ${canvasHeight}`;
 
-  const handleSVGContextMenu: MouseEventHandler = (event) =>
-    event.preventDefault();
-
   const handlePointerDown: PointerEventHandler = (event) => {
     if (typeof pointerID === "number") {
       return;
@@ -434,7 +431,6 @@ const Page: FunctionComponent<{
               width: "100%",
               userSelect: "none",
             }}
-            onContextMenu={handleSVGContextMenu}
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}
@@ -525,23 +521,28 @@ const Canvas: FunctionComponent<
     pointerID: number | undefined;
     dispatchPaths: Dispatch<SetStateAction<Point[][]>>;
     dispatchPointerID: Dispatch<SetStateAction<number | undefined>>;
-  } & SVGProps<SVGSVGElement>
-> = ({ paths, pointerID, dispatchPaths, dispatchPointerID, ...svgProps }) => (
-  <svg {...svgProps}>
-    {paths.map((path, pathIndex) => (
-      <Path
-        key={pathIndex}
-        path={path}
-        index={pathIndex}
-        erasable={
-          typeof pointerID !== "number" || pathIndex !== paths.length - 1
-        }
-        dispatchPaths={dispatchPaths}
-        dispatchPointerID={dispatchPointerID}
-      />
-    ))}
-  </svg>
-);
+  } & Omit<SVGProps<SVGSVGElement>, "onContextMenu">
+> = ({ paths, pointerID, dispatchPaths, dispatchPointerID, ...svgProps }) => {
+  const handleContextMenu: MouseEventHandler = (event) =>
+    event.preventDefault();
+
+  return (
+    <svg {...svgProps} onContextMenu={handleContextMenu}>
+      {paths.map((path, pathIndex) => (
+        <Path
+          key={pathIndex}
+          path={path}
+          index={pathIndex}
+          erasable={
+            typeof pointerID !== "number" || pathIndex !== paths.length - 1
+          }
+          dispatchPaths={dispatchPaths}
+          dispatchPointerID={dispatchPointerID}
+        />
+      ))}
+    </svg>
+  );
+};
 
 const Path: FunctionComponent<{
   path: Point[];
@@ -559,6 +560,9 @@ const Path: FunctionComponent<{
         `${pointIndex === 0 ? "M" : "L"} ${point.x} ${point.y}`
     )
     .join(" ");
+
+  const handleContextMenu: MouseEventHandler = (event) =>
+    event.preventDefault();
 
   const handlePointerDown = () =>
     setTimeoutID(
@@ -598,6 +602,7 @@ const Path: FunctionComponent<{
         stroke={textColor}
         strokeLinecap="round"
         style={{ userSelect: "none" }}
+        onContextMenu={handleContextMenu}
       />
 
       {erasable && (
@@ -609,6 +614,7 @@ const Path: FunctionComponent<{
           strokeLinecap="round"
           strokeWidth={8}
           style={{ userSelect: "none" }}
+          onContextMenu={handleContextMenu}
           onPointerCancel={handlePointerUp}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
