@@ -288,7 +288,7 @@ const Page: FunctionComponent<{
 
   const handleShareButtonClick = async () => {
     const padding = 8;
-    const zoom = 4;
+    const zoom = 8;
 
     const noiseFilteredPaths = paths.filter((path) => {
       let length = 0;
