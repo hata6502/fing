@@ -204,6 +204,10 @@ const Page: FunctionComponent<{
 
   const viewBox = `0 0 ${canvasWidth} ${canvasHeight}`;
 
+  const handleContextMenu: MouseEventHandler = (event) => {
+    event.preventDefault();
+  };
+
   const handlePointerDown: PointerEventHandler = (event) => {
     if (typeof pointerID === "number") {
       return;
@@ -386,7 +390,7 @@ const Page: FunctionComponent<{
   };
 
   return (
-    <>
+    <div onContextMenu={handleContextMenu}>
       <div
         ref={canvasTopElementRef}
         style={{
@@ -469,7 +473,7 @@ const Page: FunctionComponent<{
       >
         Clear
       </button>
-    </>
+    </div>
   );
 };
 
