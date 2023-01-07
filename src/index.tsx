@@ -30,6 +30,11 @@ if ("serviceWorker" in navigator) {
   await navigator.serviceWorker.register("/serviceWorker.mjs");
 }
 
+const pathTolineSegments = (path: Point[]) =>
+  path
+    .slice(0, -1)
+    .map((point, pointIndex) => [point, path[pointIndex + 1]] as const);
+
 const App: FunctionComponent = () => {
   const [pageKey, dispatchPageKey] = useState("");
   return <Page key={pageKey} dispatchPageKey={dispatchPageKey} />;
@@ -272,11 +277,40 @@ const Page: FunctionComponent<{
       t: Date.now() - mountedTime,
       p: event.pressure,
     };
+    const currentPath = [...(paths.at(-1) ?? []), currentPoint];
+    const currentLineSegments = pathTolineSegments(currentPath);
 
-    dispatchPaths((prevPaths) => [
-      ...prevPaths.slice(0, -1),
-      [...prevPaths[prevPaths.length - 1], currentPoint],
-    ]);
+    const existingPaths = paths.slice(0, -1);
+    const unerasedPaths = existingPaths.filter((existingPath) => {
+      let intersectedCount = 0;
+
+      for (const a of pathTolineSegments(existingPath)) {
+        for (const b of currentLineSegments) {
+          if (
+            ((a[0].x - a[1].x) * (b[0].y - a[0].y) +
+              (a[0].y - a[1].y) * (a[0].x - b[0].x)) *
+              ((a[0].x - a[1].x) * (b[1].y - a[0].y) +
+                (a[0].y - a[1].y) * (a[0].x - b[1].x)) <
+              0 &&
+            ((b[0].x - b[1].x) * (a[0].y - b[0].y) +
+              (b[0].y - b[1].y) * (b[0].x - a[0].x)) *
+              ((b[0].x - b[1].x) * (a[1].y - b[0].y) +
+                (b[0].y - b[1].y) * (b[0].x - a[1].x)) <
+              0
+          ) {
+            intersectedCount++;
+          }
+        }
+      }
+
+      return intersectedCount < 8;
+    });
+
+    if (unerasedPaths.length < existingPaths.length) {
+      dispatchPaths(unerasedPaths);
+    } else {
+      dispatchPaths([...existingPaths, currentPath]);
+    }
 
     dispatchPointerID(undefined);
   };
@@ -423,9 +457,6 @@ const Page: FunctionComponent<{
 
           <Canvas
             paths={paths}
-            pointerID={pointerID}
-            dispatchPaths={dispatchPaths}
-            dispatchPointerID={dispatchPointerID}
             viewBox={viewBox}
             xmlns="http://www.w3.org/2000/svg"
             style={{
@@ -516,37 +547,18 @@ const Grids: FunctionComponent<{ canvasWidth: number; canvasHeight: number }> =
 const Canvas: FunctionComponent<
   {
     paths: Point[][];
-    pointerID: number | undefined;
-    dispatchPaths: Dispatch<SetStateAction<Point[][]>>;
-    dispatchPointerID: Dispatch<SetStateAction<number | undefined>>;
   } & SVGProps<SVGSVGElement>
-> = ({ paths, pointerID, dispatchPaths, dispatchPointerID, ...svgProps }) => (
+> = ({ paths, ...svgProps }) => (
   <svg {...svgProps}>
     {paths.map((path, pathIndex) => (
-      <Path
-        key={pathIndex}
-        path={path}
-        index={pathIndex}
-        erasable={
-          typeof pointerID !== "number" || pathIndex !== paths.length - 1
-        }
-        dispatchPaths={dispatchPaths}
-        dispatchPointerID={dispatchPointerID}
-      />
+      <Path key={pathIndex} path={path} />
     ))}
   </svg>
 );
 
 const Path: FunctionComponent<{
   path: Point[];
-  index: number;
-  erasable: boolean;
-  dispatchPaths: Dispatch<SetStateAction<Point[][]>>;
-  dispatchPointerID: Dispatch<SetStateAction<number | undefined>>;
-}> = memo(({ path, index, erasable, dispatchPaths, dispatchPointerID }) => {
-  const [timeoutID, setTimeoutID] = useState<number>();
-  const elementRef = useRef<SVGPathElement>(null);
-
+}> = memo(({ path }) => {
   const d = path
     .map(
       (point, pointIndex) =>
@@ -554,54 +566,5 @@ const Path: FunctionComponent<{
     )
     .join(" ");
 
-  const handlePointerDown = () =>
-    setTimeoutID(
-      window.setTimeout(() => {
-        dispatchPaths((prevPaths) => [
-          ...prevPaths.slice(0, index),
-          ...prevPaths.slice(index + 1, -1),
-        ]);
-
-        dispatchPointerID(undefined);
-      }, 500)
-    );
-
-  const handlePointerMove: PointerEventHandler = (event) => {
-    if (!elementRef.current) {
-      throw new Error("elementRef is null");
-    }
-
-    if (
-      document
-        .elementsFromPoint(event.pageX - scrollX, event.pageY - scrollY)
-        .includes(elementRef.current)
-    ) {
-      return;
-    }
-
-    clearTimeout(timeoutID);
-  };
-
-  const handlePointerUp = () => clearTimeout(timeoutID);
-
-  return (
-    <>
-      <path d={d} fill="none" stroke={textColor} strokeLinecap="round" />
-
-      {erasable && (
-        <path
-          ref={elementRef}
-          d={d}
-          fill="none"
-          stroke="rgba(0, 0, 0, 0)"
-          strokeLinecap="round"
-          strokeWidth={8}
-          onPointerCancel={handlePointerUp}
-          onPointerDown={handlePointerDown}
-          onPointerMove={handlePointerMove}
-          onPointerUp={handlePointerUp}
-        />
-      )}
-    </>
-  );
+  return <path d={d} fill="none" stroke={textColor} strokeLinecap="round" />;
 });

@@ -10,7 +10,7 @@
   "author": "Tomoyuki Hata <hato6502@gmail.com>",
   "scripts": {
     "build": "webpack",
-    "serve": "http-server -c-1 dist",
+    "start": "http-server -c-1 dist",
     "test": "tsc --noEmit"
   },
   "devDependencies": {
