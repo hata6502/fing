@@ -254,7 +254,8 @@ const Page: FunctionComponent<{
 
       if (feedback >= 0.5) {
         const delta =
-          Math.abs(currentPoint.y - prevPoint.y) / (visualViewport.scale**(1/2));
+          Math.abs(currentPoint.y - prevPoint.y) /
+          visualViewport.scale ** (1 / 2);
 
         velocityXRef.current +=
           (feedback - 0.5) * delta * sensitivityRef.current;
@@ -280,8 +281,10 @@ const Page: FunctionComponent<{
     const currentPath = [...(paths.at(-1) ?? []), currentPoint];
     const currentLineSegments = pathTolineSegments(currentPath);
 
+    let maxIntersectedCount = 0;
     const existingPaths = paths.slice(0, -1);
-    const unerasedPaths = existingPaths.filter((existingPath) => {
+    const intersectedCountEntries: [Point[], number][] = [];
+    for (const existingPath of existingPaths) {
       let intersectedCount = 0;
 
       for (const a of pathTolineSegments(existingPath)) {
@@ -303,13 +306,18 @@ const Page: FunctionComponent<{
         }
       }
 
-      return intersectedCount < 8;
-    });
+      maxIntersectedCount = Math.max(intersectedCount, maxIntersectedCount);
+      intersectedCountEntries.push([existingPath, intersectedCount]);
+    }
 
-    if (unerasedPaths.length < existingPaths.length) {
-      dispatchPaths(unerasedPaths);
-    } else {
+    if (maxIntersectedCount < 8) {
       dispatchPaths([...existingPaths, currentPath]);
+    } else {
+      dispatchPaths(
+        intersectedCountEntries.flatMap(([existingPath, intersectedCount]) =>
+          intersectedCount ? [] : [existingPath]
+        )
+      );
     }
 
     dispatchPointerID(undefined);
