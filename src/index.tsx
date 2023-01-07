@@ -254,7 +254,7 @@ const Page: FunctionComponent<{
 
       if (feedback >= 0.5) {
         const delta =
-          Math.abs(currentPoint.y - prevPoint.y) * visualViewport.scale;
+          Math.abs(currentPoint.y - prevPoint.y) / (visualViewport.scale**(1/2));
 
         velocityXRef.current +=
           (feedback - 0.5) * delta * sensitivityRef.current;
