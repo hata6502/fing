@@ -245,7 +245,7 @@ const Page: FunctionComponent<{
           Math.abs(currentPoint.y - prevPoint.y) /
           visualViewport.scale ** (1 / 2);
 
-        velocityXRef.current += ((feedback - 0.5) * delta) / 12;
+        velocityXRef.current += ((feedback - 0.5) * delta) / 8;
       }
     }
   };
