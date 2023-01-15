@@ -159,7 +159,6 @@ const Page: FunctionComponent<{
     };
   }, []);
 
-  const sensitivityRef = useRef(1 / 16);
   const velocityXRef = useRef(0);
   const velocityDecimalXRef = useRef(0);
 
@@ -187,17 +186,6 @@ const Page: FunctionComponent<{
   useEffect(() => {
     localStorage.setItem("canvasHeight", String(canvasHeight));
   }, [canvasHeight]);
-
-  useEffect(() => {
-    const sensitivityString = localStorage.getItem("sensitivity");
-    if (sensitivityString) {
-      sensitivityRef.current = Number(sensitivityString);
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("sensitivity", String(sensitivityRef.current));
-  }, [sensitivityRef.current]);
 
   useEffect(() => {
     const timeoutID = window.setTimeout(() => {
@@ -257,12 +245,7 @@ const Page: FunctionComponent<{
           Math.abs(currentPoint.y - prevPoint.y) /
           visualViewport.scale ** (1 / 2);
 
-        velocityXRef.current +=
-          (feedback - 0.5) * delta * sensitivityRef.current;
-        sensitivityRef.current = Math.max(
-          sensitivityRef.current + ((feedback - 0.75) * delta) / 256,
-          0
-        );
+        velocityXRef.current += ((feedback - 0.5) * delta) / 16;
       }
     }
   };
