@@ -476,8 +476,8 @@ const Page: FunctionComponent<{
         type="button"
         style={{
           position: "fixed",
-          top: 8,
-          left: 8,
+          top: "calc(env(safe-area-inset-top) + 8px)",
+          left: "calc(env(safe-area-inset-left) + 8px)",
         }}
         onClick={handleShareButtonClick}
       >
@@ -488,8 +488,8 @@ const Page: FunctionComponent<{
         type="button"
         style={{
           position: "fixed",
-          top: 8,
-          right: 8,
+          top: "calc(env(safe-area-inset-top) + 8px)",
+          right: "calc(env(safe-area-inset-right) + 8px)",
         }}
         onClick={handleClearButtonClick}
       >
