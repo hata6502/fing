@@ -441,6 +441,7 @@ const Page: FunctionComponent<{
     }
 
     dispatchPageKey(String(Math.random()));
+    alert("Cleared. ");
   };
 
   return (
