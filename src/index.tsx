@@ -296,17 +296,39 @@ const Page: FunctionComponent<{
     if (maxIntersectedCount < 8) {
       dispatchPaths([...existingPaths, currentPath]);
     } else {
-      const minX = currentPath.reduce((a, b) => Math.min(a, b.x), Infinity);
-      const maxX = currentPath.reduce((a, b) => Math.max(a, b.x), -Infinity);
-      const minY = currentPath.reduce((a, b) => Math.min(a, b.y), Infinity);
-      const maxY = currentPath.reduce((a, b) => Math.max(a, b.y), -Infinity);
+      const minX = currentPath.reduce(
+        (min, point) => Math.min(min, point.x),
+        Infinity
+      );
+      const maxX = currentPath.reduce(
+        (max, point) => Math.max(max, point.x),
+        -Infinity
+      );
+      const minY = currentPath.reduce(
+        (min, point) => Math.min(min, point.y),
+        Infinity
+      );
+      const maxY = currentPath.reduce(
+        (max, point) => Math.max(max, point.y),
+        -Infinity
+      );
 
       dispatchPaths(
-        existingPaths.filter((existingPath) =>
-          existingPath.every(
-            ({ x, y }) => x < minX || x >= maxX || y < minY || y >= maxY
-          )
-        )
+        existingPaths.filter((existingPath) => {
+          const centerX =
+            existingPath.reduce((sum, point) => sum + point.x, 0) /
+            existingPath.length;
+          const centerY =
+            existingPath.reduce((sum, point) => sum + point.y, 0) /
+            existingPath.length;
+
+          return (
+            centerX < minX ||
+            centerX >= maxX ||
+            centerY < minY ||
+            centerY >= maxY
+          );
+        })
       );
     }
 
