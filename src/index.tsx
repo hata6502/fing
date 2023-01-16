@@ -264,41 +264,48 @@ const Page: FunctionComponent<{
     const currentPath = [...(paths.at(-1) ?? []), currentPoint];
     const currentLineSegments = pathTolineSegments(currentPath);
 
-    let maxIntersectedCount = 0;
     const existingPaths = paths.slice(0, -1);
-    const intersectedCountEntries: [Point[], number][] = [];
-    for (const existingPath of existingPaths) {
-      let intersectedCount = 0;
+    const maxIntersectedCount = existingPaths.reduce(
+      (maxIntersectedCount, existingPath) => {
+        let intersectedCount = 0;
 
-      for (const a of pathTolineSegments(existingPath)) {
-        for (const b of currentLineSegments) {
-          if (
-            ((a[0].x - a[1].x) * (b[0].y - a[0].y) +
-              (a[0].y - a[1].y) * (a[0].x - b[0].x)) *
-              ((a[0].x - a[1].x) * (b[1].y - a[0].y) +
-                (a[0].y - a[1].y) * (a[0].x - b[1].x)) <
-              0 &&
-            ((b[0].x - b[1].x) * (a[0].y - b[0].y) +
-              (b[0].y - b[1].y) * (b[0].x - a[0].x)) *
-              ((b[0].x - b[1].x) * (a[1].y - b[0].y) +
-                (b[0].y - b[1].y) * (b[0].x - a[1].x)) <
-              0
-          ) {
-            intersectedCount++;
+        for (const a of pathTolineSegments(existingPath)) {
+          for (const b of currentLineSegments) {
+            if (
+              ((a[0].x - a[1].x) * (b[0].y - a[0].y) +
+                (a[0].y - a[1].y) * (a[0].x - b[0].x)) *
+                ((a[0].x - a[1].x) * (b[1].y - a[0].y) +
+                  (a[0].y - a[1].y) * (a[0].x - b[1].x)) <
+                0 &&
+              ((b[0].x - b[1].x) * (a[0].y - b[0].y) +
+                (b[0].y - b[1].y) * (b[0].x - a[0].x)) *
+                ((b[0].x - b[1].x) * (a[1].y - b[0].y) +
+                  (b[0].y - b[1].y) * (b[0].x - a[1].x)) <
+                0
+            ) {
+              intersectedCount++;
+            }
           }
         }
-      }
 
-      maxIntersectedCount = Math.max(intersectedCount, maxIntersectedCount);
-      intersectedCountEntries.push([existingPath, intersectedCount]);
-    }
+        return Math.max(maxIntersectedCount, intersectedCount);
+      },
+      -Infinity
+    );
 
     if (maxIntersectedCount < 8) {
       dispatchPaths([...existingPaths, currentPath]);
     } else {
+      const minX = currentPath.reduce((a, b) => Math.min(a, b.x), Infinity);
+      const maxX = currentPath.reduce((a, b) => Math.max(a, b.x), -Infinity);
+      const minY = currentPath.reduce((a, b) => Math.min(a, b.y), Infinity);
+      const maxY = currentPath.reduce((a, b) => Math.max(a, b.y), -Infinity);
+
       dispatchPaths(
-        intersectedCountEntries.flatMap(([existingPath, intersectedCount]) =>
-          intersectedCount ? [] : [existingPath]
+        existingPaths.filter((existingPath) =>
+          existingPath.every(
+            ({ x, y }) => x < minX || x >= maxX || y < minY || y >= maxY
+          )
         )
       );
     }
