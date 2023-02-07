@@ -1,5 +1,5 @@
 * {
-  touch-action: manipulation;
+  touch-action: pinch-zoom;
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
