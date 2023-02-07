@@ -6,6 +6,7 @@ import {
   SetStateAction,
   StrictMode,
   SVGProps,
+  TouchEventHandler,
   memo,
   useEffect,
   useRef,
@@ -345,6 +346,12 @@ const Page: FunctionComponent<{
     dispatchPointerID(undefined);
   };
 
+  const handleTouchEnd: TouchEventHandler = (event) => {
+    // Prevent mouse events for iOS.
+    // https://developer.mozilla.org/ja/docs/Web/API/touchevent#using_with_addeventlistener_and_preventdefault
+    event.preventDefault();
+  };
+
   const handleShareButtonClick = async () => {
     const padding = 8;
     const canvasZoom = 8;
@@ -489,6 +496,7 @@ const Page: FunctionComponent<{
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}
             onPointerCancel={handlePointerCancel}
+            onTouchEnd={handleTouchEnd}
           />
         </div>
 
