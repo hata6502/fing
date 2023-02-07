@@ -17,8 +17,7 @@ import { createRoot } from "react-dom/client";
 const backgroundColor = "#fafaef";
 const textColor = "rgba(0, 0, 0, 0.87)";
 
-const viewportZoom = 10;
-const gridSize = 32 * viewportZoom;
+const gridSize = 32;
 const tileSize = 4 * gridSize;
 
 interface Point {
@@ -357,7 +356,7 @@ const Page: FunctionComponent<{
 
   const handleShareButtonClick = async () => {
     const padding = 8;
-    const canvasZoom = 8;
+    const zoom = 8;
 
     const noiseFilteredPaths = paths.filter((path) => {
       let length = 0;
@@ -381,8 +380,8 @@ const Page: FunctionComponent<{
     const minY = points.reduce((a, b) => Math.min(a, b.y), Infinity) - padding;
 
     const canvasElement = document.createElement("canvas");
-    const width = (maxX - minX) * canvasZoom;
-    const height = (maxY - minY) * canvasZoom;
+    const width = (maxX - minX) * zoom;
+    const height = (maxY - minY) * zoom;
     canvasElement.width = width;
     canvasElement.height = height;
 
@@ -396,7 +395,7 @@ const Page: FunctionComponent<{
     canvasContext.fill();
 
     canvasContext.lineCap = "round";
-    canvasContext.lineWidth = viewportZoom * canvasZoom;
+    canvasContext.lineWidth = zoom;
     canvasContext.strokeStyle = textColor;
     for (const path of paths) {
       canvasContext.beginPath();
@@ -404,13 +403,13 @@ const Page: FunctionComponent<{
       for (const [pointIndex, point] of path.entries()) {
         if (pointIndex === 0) {
           canvasContext.moveTo(
-            (point.x - minX) * canvasZoom,
-            (point.y - minY) * canvasZoom
+            (point.x - minX) * zoom,
+            (point.y - minY) * zoom
           );
         } else {
           canvasContext.lineTo(
-            (point.x - minX) * canvasZoom,
-            (point.y - minY) * canvasZoom
+            (point.x - minX) * zoom,
+            (point.y - minY) * zoom
           );
         }
       }
@@ -518,9 +517,8 @@ const Page: FunctionComponent<{
         type="button"
         style={{
           position: "fixed",
-          top: "calc(env(safe-area-inset-top) + 80px)",
-          left: "calc(env(safe-area-inset-left) + 80px)",
-          fontSize: 12 * viewportZoom,
+          top: "calc(env(safe-area-inset-top) + 8px)",
+          left: "calc(env(safe-area-inset-left) + 8px)",
         }}
         onClick={handleShareButtonClick}
       >
@@ -531,9 +529,8 @@ const Page: FunctionComponent<{
         type="button"
         style={{
           position: "fixed",
-          top: "calc(env(safe-area-inset-top) + 80px)",
-          right: "calc(env(safe-area-inset-right) + 80px)",
-          fontSize: 12 * viewportZoom,
+          top: "calc(env(safe-area-inset-top) + 8px)",
+          right: "calc(env(safe-area-inset-right) + 8px)",
         }}
         onClick={handleClearButtonClick}
       >
@@ -566,7 +563,7 @@ const Grids: FunctionComponent<{ canvasWidth: number; canvasHeight: number }> =
               key={`${x}-${y}`}
               cx={cx}
               cy={cy}
-              r={viewportZoom}
+              r={1}
               fill={
                 cx % tileSize === 0 && cy % tileSize === 0
                   ? "rgba(0, 0, 0, 0.2)"
@@ -601,13 +598,5 @@ const Path: FunctionComponent<{
     )
     .join(" ");
 
-  return (
-    <path
-      d={d}
-      fill="none"
-      stroke={textColor}
-      strokeLinecap="round"
-      strokeWidth={viewportZoom}
-    />
-  );
+  return <path d={d} fill="none" stroke={textColor} strokeLinecap="round" />;
 });
