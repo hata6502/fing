@@ -168,7 +168,9 @@ const Page: FunctionComponent<{
     const intervalID = setInterval(() => {
       velocityDecimalXRef.current += velocityXRef.current;
       const velocityIntegerX = Math.floor(velocityDecimalXRef.current);
-      scrollBy(velocityIntegerX, 0);
+      if (velocityIntegerX) {
+        scrollBy(velocityIntegerX, 0);
+      }
       velocityDecimalXRef.current -= velocityIntegerX;
 
       velocityXRef.current /= 1 + 1 / 64;
