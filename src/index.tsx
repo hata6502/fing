@@ -167,11 +167,12 @@ const Page: FunctionComponent<{
   useEffect(() => {
     const intervalID = setInterval(() => {
       velocityDecimalXRef.current += velocityXRef.current;
-      scrollBy(Math.floor(velocityDecimalXRef.current), 0);
-      velocityDecimalXRef.current -= Math.floor(velocityDecimalXRef.current);
+      const velocityIntegerX = Math.floor(velocityDecimalXRef.current);
+      scrollBy(velocityIntegerX, 0);
+      velocityDecimalXRef.current -= velocityIntegerX;
 
-      velocityXRef.current /= 1.046875;
-    }, 16);
+      velocityXRef.current /= 1 + 1 / 64;
+    });
     return () => {
       clearInterval(intervalID);
     };
@@ -247,7 +248,7 @@ const Page: FunctionComponent<{
           Math.abs(currentPoint.y - prevPoint.y) /
           visualViewport.scale ** (1 / 2);
 
-        velocityXRef.current += ((feedback - 0.5) * delta) / 4;
+        velocityXRef.current += ((feedback - 0.5) * delta) / 16;
       }
     }
   };
