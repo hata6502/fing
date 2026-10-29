@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "@types/react-dom": "^18.0.3",
-    "copy-webpack-plugin": "^10.2.4",
+    "copy-webpack-plugin": "^14.0.0",
     "http-server": "^14.1.0",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
